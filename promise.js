@@ -4,11 +4,9 @@ const REJECTED = 'rejected';
 
 class MyPromise {
     constructor (executor) {
+
         // 初始化状态为 pending
         this._status = PENDING;
-        // this._onFulfilled;
-        // this._onRejected;
-        // this._onCatch;
         this._executor = executor;
 
         if (typeof this._executor === 'function') {
@@ -17,13 +15,7 @@ class MyPromise {
                 this._res = this._res || res;
             } catch (e) {
                 console.log(e);
-                if (typeof this._onCatch === 'function') {
-                    this._onCatch();
-                }
-                if (typeof this._onFinally === 'function') {
-                    this._onFinally();
-                    this._onFinally = null;
-                }
+                this._rejected(e);
             }
         }
     }
@@ -40,23 +32,31 @@ class MyPromise {
     }
 
     catch (onCatch) {
-        this._onCatch = onCatch;
+
+        // catch 其实就是 then 的无 fulfilled 处理
+        return this.then(null, onCatch);
     }
 
     finally (onFinally) {
         this._onFinally = onFinally;
+        this.next();
+        return this;
     }
 
     _fulfilled (data) {
-        this._status = FULFILLED;
-        this._res = data || this._res;
-        this.next();
+        if (this._status === PENDING) {
+            this._status = FULFILLED;
+            this._res = data || this._res;
+            this.next();
+        }
     }
 
     _rejected (data) {
-        this._status = REJECTED;
-        this._res = data || this._res;
-        this.next();
+        if (this._status === PENDING) {
+            this._status = REJECTED;
+            this._res = data || this._res;
+            this.next();
+        }
     }
 
     next () {
@@ -67,37 +67,37 @@ class MyPromise {
                     this._onFulfilledRes = this._onFulfilled(this._res);
 
                     if (this._onFulfilledRes instanceof MyPromise) {
-
-                        // 执行下一步的resolve回调
-                        if (typeof this._nextFulfilled === 'function') {
-                            this._nextFulfilled(this._onFulfilledRes._res);
-                        }
+                        this._nextPromise._res = this._onFulfilledRes._res;
                     } else {
-
-                        // 执行下一步的resolve回调
-                        if (typeof this._nextFulfilled === 'function') {
-                            this._nextFulfilled(this._onFulfilledRes);
-                        }
+                        this._nextPromise._res = this._onFulfilledRes;
                     }
-
+                    this._nextPromise._fulfilled(this._nextPromise._res);
                     this._onFulfilled = null;
                 }
             } else if (this._status === REJECTED) {
                 if (typeof this._onRejected === 'function') {
 
                     // 执行then的reject回调
+                    // 后面的步骤全部reject
                     this._onRejectedRes = this._onRejected(this._res);
 
-                    // 执行下一步的reject回调
-                    if (typeof this._nextRejected === 'function') {
-                        this._nextRejected(this._onRejectedRes);
+                    if (this._onRejectedRes instanceof MyPromise) {
+                        this._nextPromise._res = this._onRejectedRes._res;
+                    } else {
+                        this._nextPromise._res = this._onRejectedRes;
                     }
+
+                    this._nextPromise._rejected(this._nextPromise._res);
                     this._onRejected = null;
+                } else {
+
+                    // 后面的步骤全部reject
+                    this._nextPromise && this._nextPromise._rejected(this._res);
                 }
             }
 
             // Finally回调
-            if (typeof this._onFinally === 'function' && this._status !== PENDING) {
+            if (typeof this._onFinally === 'function') {
                 this._onFinally();
                 this._onFinally = null;
             }
@@ -105,28 +105,32 @@ class MyPromise {
     }
 }
 
-new MyPromise((res) => {
-    res(22);
+new MyPromise((res, rej) => {
+    rej(22);
     return 11;
 }).then((data) => {
     console.log('======================');
     console.log(data);
 }).then((data) => {
-    return new MyPromise(res => res(33));
+    return new MyPromise((res, rej) => rej(33));
 }).then((data) => {
+    console.log(data);
+}).catch((data) => {
     console.log(data);
 }).finally((data) => {
     console.log('finally');
 });
 
-b = new Promise(function (res) {
-    res(22);
+b = new Promise(function (res, rej) {
+    rej(22);
     return 11;
 }).then((data) => {
     console.log(data);
 }).then((data) => {
-    return new Promise(res => res(33));
+    return new Promise((res, rej) => rej(33));
 }).then((data) => {
+    console.log(data);
+}).catch((data) => {
     console.log(data);
 }).finally((data) => {
     console.log('finally');
