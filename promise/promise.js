@@ -104,31 +104,103 @@ class MyPromise {
             }
         }, 0);
     }
+
 }
+
+MyPromise.all = function (promises) {
+    return new MyPromise((res, rej) => {
+        const result = {};
+        promises.forEach((promise, index) => {
+            promise.then((data) => {
+                check(data, index);
+            }, rej);
+        });
+
+        function check (data, index) {
+            result[index] = data;
+            result.length = result.length ? ++result.length : 1;
+
+            // 全部解决了
+            if (result.length === promises.length) {
+                res(Array.from(result));
+            }
+        }
+    });
+};
+MyPromise.race = function (promises) {
+    return new MyPromise((res, rej) => {
+        promises.forEach(promise => {
+            promise.then(res, rej);
+        });
+    });
+};
+MyPromise.resolve = function (data) {
+    return new MyPromise((res, rej) => {
+        res(data);
+    });
+};
+MyPromise.reject = function (data) {
+    return new MyPromise((res, rej) => {
+        rej(data);
+    });
+};
 
 /* 测试代码 ************************************************************************************/
 
-new MyPromise((res, rej) => {
-    setTimeout(() => {
-        res(22);
-    }, 1000);
-    return 11;
-}).then((data) => {
-    console.log('======================');
-    console.log(data);
-}).then((data) => {
-    return new MyPromise((res, rej) => {
-        setTimeout(() => {
-            rej(33);
-        }, 1000);
-    });
-}).then((data) => {
-    console.log(data);
-}).catch((data) => {
-    console.log(data);
-}).finally((data) => {
-    console.log('finally');
-});
+// let a = new MyPromise((res, rej) => {
+//     setTimeout(() => {
+//         res(22);
+//     }, 1000);
+// });
+// let b = new MyPromise((res, rej) => {
+//     setTimeout(() => {
+//         res(11);
+//     }, 0);
+// });
+//
+// MyPromise.all([a, b]).then((data) => {
+//     console.log(data);
+// }, (data) => {
+//     console.log(data);
+// });
+// let a = new Promise((res, rej) => {
+//     setTimeout(() => {
+//         res(22);
+//     }, 1000);
+// });
+// let b = new Promise((res, rej) => {
+//     setTimeout(() => {
+//         res(11);
+//     }, 0);
+// });
+//
+// Promise.all([a, b]).then((data) => {
+//     console.log(data);
+// }, (data) => {
+//     console.log(data);
+// });
+
+// new MyPromise((res, rej) => {
+//     setTimeout(() => {
+//         res(22);
+//     }, 1000);
+//     return 11;
+// }).then((data) => {
+//     console.log('======================');
+//     console.log(data);
+// }).then((data) => {
+//     return new MyPromise((res, rej) => {
+//         setTimeout(() => {
+//             rej(33);
+//         }, 1000);
+//     });
+// }).then((data) => {
+//     console.log(data);
+// }).catch((data) => {
+//     console.log(data);
+// }).finally((data) => {
+//     console.log('finally');
+// });
 
 // var test = new MyPromise((res, rej) => {
 //     setTimeout(() => {
