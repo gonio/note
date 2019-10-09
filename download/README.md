@@ -5,7 +5,7 @@
 ```html
 <a href="index_logo.gif" download="logo">下载</a>
 ```  
-##2、借助HTML5 Blob实现文本信息文件下载
+## 2、借助HTML5 Blob实现文本信息文件下载
 
 ```javascript
 var exportFile = function (content, filename) {
@@ -24,7 +24,7 @@ var exportFile = function (content, filename) {
  };
 ```  
 
-##3、借助Base64实现任意文件下载
+## 3、借助Base64实现任意文件下载
 ```javascript
 var exportFile = function (domImg, filename) {
     // 创建隐藏的可下载链接
@@ -47,7 +47,7 @@ var exportFile = function (domImg, filename) {
 };
 ```  
 
-##4、需要post一些参数获取下载数据
+## 4、需要post一些参数获取下载数据
 ```javascript
 var exportFile = function  (url, config) {
     const doc = document;
