@@ -1,11 +1,12 @@
 # 下载文件的几种方法
 ## 1、HTML5自带属性
 使用a标签的download属性（HTML5），可以任意下载href的地址（同域名）；兼容性：不支持ie  
-例子：  
+
 ```html
 <a href="index_logo.gif" download="logo">下载</a>
-```
+```  
 ##2、借助HTML5 Blob实现文本信息文件下载
+
 ```javascript
 var exportFile = function (content, filename) {
      // 创建隐藏的可下载链接
@@ -21,7 +22,8 @@ var exportFile = function (content, filename) {
      // 然后移除
      document.body.removeChild(eleLink);
  };
-```
+```  
+
 ##3、借助Base64实现任意文件下载
 ```javascript
 var exportFile = function (domImg, filename) {
@@ -43,7 +45,8 @@ var exportFile = function (domImg, filename) {
     // 然后移除
     document.body.removeChild(eleLink);
 };
-```
+```  
+
 ##4、需要post一些参数获取下载数据
 ```javascript
 var exportFile = function  (url, config) {
