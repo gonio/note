@@ -83,7 +83,7 @@
 }
 ```
 #### 3、展开的节点需要加虚线，连接被子节点撑开的部分 
-![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/3_1.png)
+![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/3_1.png)  
 这里有个问题，如果要加入伪元素，最好是选择该元素.el-tree-node__children插入。
 ![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/3_2.png)
 但是由于element的源码限制，他的padding是设置在节点上的，然而节点已经占用了他的:before。
