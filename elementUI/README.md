@@ -1,9 +1,9 @@
 # 树形 el-tree 展开节点增加虚线
 ### 初始样式
-![Image text](https://raw.githubusercontent.com/gonio/note/blob/master/elementUI/images/初始.png)
+![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/初始.png)
 
 ### 期望样式
-![Image text](https://raw.githubusercontent.com/gonio/note/blob/master/elementUI/images/1_1.png)
+![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/1_1.png)
 ### 特殊目标
 此处样式固定，需要和老项目保持一致，选用伪元素实现，因此，提取出公共样式函数
 ```less
@@ -39,7 +39,7 @@
 #### 1、末尾节点加∟虚线  
 #### 2、非末尾节点加十字虚线  
 通过观察，每个节点都有固定的样式，需要保证末尾节点和非末尾节点样式正确。
-![Image text](https://raw.githubusercontent.com/gonio/note/blob/master/elementUI/images/2_1.png)
+![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/2_1.png)
 查看dom结构，每个节点前都有个span:before占位，用于显示箭头icon。
 初步决定在.el-tree-node__content节点处插入伪元素用于画虚线
 ```less
@@ -83,12 +83,12 @@
 }
 ```
 #### 3、展开的节点需要加虚线，连接被子节点撑开的部分 
-![Image text](https://raw.githubusercontent.com/gonio/note/blob/master/elementUI/images/3_1.png)
+![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/3_1.png)
 这里有个问题，如果要加入伪元素，最好是选择该元素.el-tree-node__children插入。
-![Image text](https://raw.githubusercontent.com/gonio/note/blob/master/elementUI/images/3_2.png)
+![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/3_2.png)
 但是由于element的源码限制，他的padding是设置在节点上的，然而节点已经占用了他的:before。
 .el-tree-node__children没有办法知道它的padding，没有办法确定位置。
-![Image text](https://raw.githubusercontent.com/gonio/note/blob/master/elementUI/images/3_3.png)
+![Image text](https://raw.githubusercontent.com/gonio/note/master/elementUI/images/3_3.png)
 如果把padding转移到.el-tree-node__children就可以解决了。
 查看官网文档，发现一个配置项(indent	相邻级节点间的水平缩进，单位为像素	number)，
 配置后原来的padding都为0，此时可以按我们想做的做了。
